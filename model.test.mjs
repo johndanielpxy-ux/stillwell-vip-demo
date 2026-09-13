@@ -5,3 +5,5 @@ test('unknown severity and missing days are not zero',()=>{let s=seed();assert.e
 test('empty state yields no pattern or invented average',()=>{let s={...seed(),observations:[]};assert.equal(stats(s).average,null);assert.ok(comparison(s).every(g=>g.average===null));});
 test('demo parser preserves uncertainty and extracts only stated values',()=>{assert.equal(parseDemo('I have a headache').severity,null);assert.equal(parseDemo('Yesterday I had a headache, 3/5, and slept 6 hours').sleep,6);assert.equal(parseDemo('Should I change my medication?'),null);});
 test('reset creates independent state',()=>{let a=seed();a.questions.pop();assert.equal(seed().questions.length,3);});
+import {dailySeries} from './model.mjs';
+test('daily chart averages repeated observations and leaves missing date absent',()=>{let s=addObservation(seed(),{date:'2026-09-12',symptom:'Headache',severity:2,sleep:6,note:'Second observation'});assert.equal(dailySeries(s).find(d=>d.date==='2026-09-12').severity,3);assert.equal(dailySeries(s).some(d=>d.date==='2026-09-06'),false);});

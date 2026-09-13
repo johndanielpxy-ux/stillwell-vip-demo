@@ -14,12 +14,15 @@ Palette: ink #193b37, teal #2c7666, mint #e4eee8, canvas #f6f8f7, paper #ffffff,
 
 ## Tasks
 
-- [ ] State and fixtures (`model.mjs`, `model.test.mjs`): source observations generate trends; accepted chat entries, edits and deletes use the same list. Node tests check correction, deletion, missingness, reset and exports.
-- [ ] Application (`index.html`, `app.mjs`, `styles.css`): overview plus six product areas; responsive sidebar, route transitions, record drawer, chart comparison, companion capture, tracker, visit agenda and family-access preview.
-- [ ] Demo controls: load sample record through a reviewed simulated extraction; import plain-text notes genuinely; export visit brief and data; keyboard dialogs; reset data; seeded/scripted response disclosure.
-- [ ] Browser QA: inspect desktop and mobile screenshots; walk through capture→correction→chart→brief, record review, reminder preview and caregiver preview/revocation. Check console and reload persistence. Fix visible defects.
-- [ ] Handoff: README with run command, filming sequence and precise functional/simulated boundaries. Open local app for the user.
+- [x] State and fixtures (`model.mjs`, `model.test.mjs`): source observations generate trends; accepted chat entries, edits and deletes use the same list. Node tests check correction, deletion, missingness, reset and exports.
+- [x] Application (`index.html`, `app.mjs`, `styles.css`): overview plus six product areas; responsive sidebar, route transitions, record drawer, chart comparison, companion capture, tracker, visit agenda and family-access preview.
+- [x] Demo controls: load sample record through a reviewed simulated extraction; import plain-text notes genuinely; export visit brief and data; keyboard dialogs; reset data; seeded/scripted response disclosure.
+- [x] Browser QA: inspect desktop and mobile screenshots; walk through capture→correction→chart→brief, record review, reminder preview and caregiver preview/revocation. Check console and reload persistence. Fix visible defects.
+- [x] Handoff: README with run command, filming sequence and precise functional/simulated boundaries. Open local app for the user.
 
 ## Acceptance
 
 No production claims or real-patient data. No nonfunctional primary controls. Charts show actual sample counts and unlogged dates. Changes must update the timeline and brief. Unknown conversation prompts must not receive fabricated clinical answers. Reminder controls schedule only an in-app demo state; no external notification promise. Family preview must never be described as secure authentication. No medical dose changes or automatic care-plan instructions.
+
+
+Execution notes: user explicitly authorised a demo frontend and GitHub deployment, superseding production gates from the earlier shape. Standalone directory is its own Git repository. Six model tests pass. Desktop and mobile screenshots inspected; UI checks verify capture/correction, insight questions, sample import and family revocation. Browser daemon stalled during one batch; restarted and the affected checks were rerun successfully.
