@@ -1,62 +1,67 @@
-# Stillwell — VIP@SoC concept demo
+# Stillwell — healthcare companion demonstration
 
-A demonstration frontend for a personal chronic-illness health companion. All supplied patient information is synthetic. Working title: Stillwell.
+A connected six-area demonstration for VIP@SoC. All supplied patient data is synthetic. The interface draws on Guava's records/tracking/visit workflows and Juno's continuing companion experience. Original code, branding and assets; no affiliation with either reference company.
 
-## Run
+## Run the server
 
-No dependencies or API keys required. With Python 3:
-
-```sh
-python3 -m http.server 4173
-```
-
-Open http://localhost:4173. To test the shared data model, use Node 20+:
+Node 22+; no package dependencies.
 
 ```sh
-node --test model.test.mjs
+cp .env.example .env
+# Set OPENAI_API_KEY and a separate DEMO_ACCESS_CODE in .env.
+npm start
 ```
 
-## Working frontend
+Open http://localhost:4174. Click the mode control and enter the **demo access code**, never the OpenAI key. Missing configuration leaves prepared mode available.
 
-- Overview plus companion, records, journal, insights, appointments and family circle.
-- Reviewable symptom capture from a small set of supported demonstration phrases.
-- Shared journal state: add, edit and delete observations; charts and brief update.
-- Search and open sample records; genuinely import a plain-text file.
-- Simulated report extraction with editable confirmation.
-- Deterministic comparisons from synthetic journal data; unknown values stay unknown.
-- Add, order and remove appointment questions; export text, print/save PDF and export JSON.
-- In-app reminder schedule and medication-note controls.
-- Family viewing permissions and revocation as a local UI simulation.
-- Browser-local persistence, responsive layouts and a repeatable reset.
+```sh
+npm test
+```
 
-## Simulation boundary
+## Actual technical work
 
-No live LLM, clinical advice, OCR, production accounts, access-control backend, wearable connections, HealthHub access, notification delivery or external sharing. The companion uses scripted responses with calculations from local state. The family view is a preview, not another authenticated user. Do not upload real patient information. No clinical outcomes or production readiness are claimed.
+- Server-side OpenAI Responses API, strict structured outputs and `store:false`.
+- Retrieval of relevant records plus recent journal observations; deterministic sleep comparisons supplied as a separate calculation source.
+- Returned source IDs and quoted passages validated against the supplied context. Citation controls open current evidence and warn if a source changed after the answer.
+- User-reviewed conversational symptom extraction: missing severity/sleep remain unknown.
+- Live PDF/image/text document extraction into an editable result before saving. Original uploaded file is retained only in browser memory for that session; extracted text persists locally. Quotes from PDFs/images remain model transcriptions requiring user review.
+- Trace view shows actual model, latency, selected-source count, context fingerprint and token usage when returned by the provider.
+- Server asset allowlist, separate demo access code, request/file limits, timeout, safe errors and in-memory rate/request limits. Limits reset when the process restarts; they are not a billing cap.
+- Local journal edits propagate to calculated charts and appointment briefs; same-day observations are averaged and missing days remain gaps.
 
-## Three-minute filming path
+Matching citation text does not establish medical accuracy. The assistant supports discussing documented information and organising questions; it is not a clinical care service.
 
-1. Reset using the top-right circular arrow. Open Overview to introduce the whole-person workspace.
-2. Health records → Add a record → Try sample report extraction → review → confirm. Mention that this import illustrates the intended extraction workflow.
-3. Companion → Log how I’m feeling → Review & save. Correct a detail, save and show its appearance in Daily journal.
-4. Patterns & insights → inspect the paired journal chart and grouped averages → save the question.
-5. Appointments → move the added question up → show the current brief → Preview & print PDF.
-6. Family circle → select which areas are shared → preview Emma’s view → revoke and preview again.
-7. End on Overview with the updated profile. Explain that the demo connects the experience; production integrations are future work.
+## Two modes
 
-Use a 1440×1000 desktop viewport for filming. Keep the synthetic-demo disclosure visible. The example date is fixed to 13 September 2026 for repeatability.
+**Live:** Requires the Node/Render server, OpenAI key and demo access code. Conversations and document content are sent through the server to OpenAI. No automatic fallback hides provider failures.
 
-## Deployment
+**Prepared:** Works on static hosting, including the GitHub Pages backup. Scripted companion, sample extraction, and working local journal/charts/exports. The interface labels this mode.
 
-This directory is a standalone static site. `render.yaml` defines a Render Static Site: no server or environment variables required. GitHub Pages can also serve the repository root. Keep hash routing so direct navigation works on static hosting.
+Family permissions and reminder delivery are still local interface simulations in both modes. There is no production patient authentication, clinician monitoring, HealthHub integration or wearable connector. Do not use real patient information.
 
-## Reference basis
+## Render
 
-Functional reference patterns come from Guava (records, tracking, insights, visit preparation and family sharing) and Juno (ongoing chronic-illness conversation and symptom capture). Branding, code, icons and synthetic records here are original. This project is not affiliated with either company.
+`render.yaml` defines a free Node web service in Singapore. Build: `npm test`; start: `npm start`; health: `/healthz`.
+
+Connect this GitHub repository in Render and supply the two secret environment variables. Keep the OpenAI key only in Render's environment configuration, never in the browser or repository. Model can be changed through OPENAI_MODEL. The model default is a configurable implementation choice, not a claim about the latest or best model.
+
+A configured status means credentials exist; it does not prove a successful provider request. Validate a synthetic conversation and file extraction before recording. Warm a free Render service before filming to avoid a cold start.
+
+## Filming path
+
+1. Reset the fictional profile. Introduce the overview and six areas.
+2. Enable live mode on the server. Upload a synthetic report, review the actual extraction and save it.
+3. Ask about an exact fact in that report. Open the citation and the answer trace.
+4. Report a new symptom, review its extracted fields and save. Show journal and charts updating.
+5. Save a pattern question to the appointment brief, reorder priorities and open print/PDF preview.
+6. Demonstrate the clearly labelled family-sharing preview. Explain which integrations remain future work.
+
+Use 1440×1000 for recording. The demo calendar is fixed to 1–13 September 2026. Synthetic documents may have other dates. Health-history facts are not independently verified by this prototype.
+
+## Reference evidence
 
 - https://guavahealth.com/article/guava-ultimate-guide
 - https://guavahealth.com/prepare-for-visits
 - https://junocompanion.com/
-
-## Limitations
-
-This is a demonstration, not a healthcare service. Local storage is not a production health-record database. Imported text is limited to 2 MB per file and 50,000 displayed characters. Simulated captures support headaches/fatigue, explicit intensity out of five and explicit sleep hours. Report PDFs/images are previewed by filename only. All patterns describe self-reported synthetic observations, not medical conclusions.
+- https://developers.openai.com/api/docs/guides/structured-outputs
+- https://developers.openai.com/api/docs/guides/pdf-files

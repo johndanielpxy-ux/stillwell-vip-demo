@@ -1,10 +1,20 @@
 services:
   - type: web
     name: stillwell-vip-demo
-    runtime: static
-    buildCommand: echo "Static demo; no build required"
-    staticPublishPath: .
-    headers:
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm test
+    startCommand: npm start
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DEMO_ACCESS_CODE
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4.1-mini
+      - key: DEMO_MAX_REQUESTS
+        value: 200
