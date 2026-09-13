@@ -1,4 +1,4 @@
-import {seed,stats,comparison,brief,dailySeries,parseDemo,addObservation,editObservation,removeObservation} from './model.mjs';
+import {seed,stats,comparison,brief,dailySeries,parseDemo,addObservation,editObservation,removeObservation} from './model.mjs?v=20260913-2';
 const KEY='stillwell-demo-v1';let state;try{state=JSON.parse(localStorage.getItem(KEY));if(state?.version!==1)state=seed();}catch{state=seed();}
 let route=location.hash.slice(1)||'overview',filter='',activeTab='All records',compare='Sleep',draft='',familyPreview=false;
 const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
