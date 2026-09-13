@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: stillwell-vip-demo
+    runtime: static
+    buildCommand: echo "Static demo; no build required"
+    staticPublishPath: .
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
