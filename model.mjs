@@ -9,6 +9,41 @@ export function editObservation(state,id,patch){return {...state,observations:st
 export function removeObservation(state,id){return {...state,observations:state.observations.filter(o=>o.id!==id)};}
 export function stats(state){let rows=state.observations.filter(o=>o.symptom.toLowerCase()==='headache'&&Number.isFinite(o.severity));return {entries:state.observations.length,days:new Set(rows.map(o=>o.date)).size,average:rows.length?rows.reduce((s,o)=>s+o.severity,0)/rows.length:null,headacheDays:new Set(rows.filter(o=>o.severity>0).map(o=>o.date)).size};}
 export function comparison(state){let pairs=state.observations.filter(o=>o.symptom.toLowerCase()==='headache'&&Number.isFinite(o.sleep)&&Number.isFinite(o.severity));let groups=[pairs.filter(o=>o.sleep<7),pairs.filter(o=>o.sleep>=7)];return groups.map((r,i)=>({label:i?'7 hours or more':'Under 7 hours',count:r.length,average:r.length?r.reduce((s,o)=>s+o.severity,0)/r.length:null}));}
-export function brief(state){let s=stats(state);return `MAYA TAN — DEMONSTRATION APPOINTMENT BRIEF\nSynthetic data. Patient-prepared; not a clinical assessment.\nAppointment: 18 September 2026, 10:30am\nReporting period: 1–13 September 2026\n\nWHAT I WOULD LIKE TO DISCUSS\n${state.questions.map((q,i)=>`${i+1}. ${q.text}`).join('\n')}\n\nMY JOURNAL\n${s.entries} observations across ${s.days} days. Average recorded severity: ${s.average===null?'Not available':s.average.toFixed(1)} / 5. Unlogged days are unknown.\n${state.observations.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6).map(o=>`${o.date}: ${o.symptom}, ${o.severity??'unknown'}/5. ${o.note} [${o.source}]`).join('\n')}\n\nRECORDS AVAILABLE\n${state.records.map(r=>`${r.date}: ${r.title} (${r.provider})`).join('\n')}\n\nPatterns are observations to discuss, not proof of a cause.\nGenerated from the current editable demonstration profile.`;}
+export function brief(state){
+ const prep=state.visitPrep||{};
+ const select=(items,ids)=>Array.isArray(ids)?items.filter(item=>ids.includes(item.id)):items;
+ const observations=select(state.observations,prep.observationIds);
+ const records=select(state.records,prep.recordIds);
+ const selectedStats=stats({...state,observations});
+ const journalDays=new Set(observations.map(o=>o.date)).size;
+ const concern=typeof prep.concern==='string'?prep.concern.trim():'';
+ const questions=state.questions.map((q,i)=>`${i+1}. ${q.text}`).join('\n')||'No questions added yet.';
+ const journal=observations.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(o=>`${o.date}: ${o.symptom}, ${o.severity??'unknown'}/5. ${o.note||''} [${o.source||'Patient journal'}]`).join('\n')||'No journal entries selected.';
+ const recordList=records.map(r=>`${r.date}: ${r.title} (${r.provider})`).join('\n')||'No records selected.';
+ return `MAYA TAN — DEMONSTRATION APPOINTMENT BRIEF
+Synthetic data. Patient-prepared; not a clinical assessment.
+Appointment: 18 September 2026, 10:30am
+Fixed demo reference period: 1–13 September 2026
+
+WHAT MATTERS FOR THIS VISIT
+${concern||'No main concern entered.'}
+
+WHAT I WOULD LIKE TO DISCUSS
+${questions}
+
+SELECTED JOURNAL COVERAGE
+${selectedStats.entries} observation${selectedStats.entries===1?'':'s'} across ${journalDays} journal day${journalDays===1?'':'s'}.
+Headache severity recorded on ${selectedStats.days} day${selectedStats.days===1?'':'s'}. Average recorded headache severity: ${selectedStats.average===null?'Not available':selectedStats.average.toFixed(1)+' / 5'}.
+Coverage and averages describe selected entries only. Unlogged days are unknown; unselected information is excluded.
+
+MY JOURNAL
+${journal}
+
+SELECTED RECORDS
+${recordList}
+
+Patterns are observations to discuss, not proof of a cause.
+Generated from the current editable demonstration profile.`;
+}
 export function parseDemo(text){let low=text.toLowerCase();if(!/headache|sleep|slept|tired|fatigue/.test(low))return null;let sleep=text.match(/(?:slept|sleep)\s*(?:for\s*)?(\d+(?:\.\d+)?)\s*(?:h|hours)/i);let severity=text.match(/([0-5])\s*(?:\/\s*5|out of 5)/i);return {date:low.includes('yesterday')?'2026-09-12':TODAY,symptom:/headache/.test(low)?'Headache':'Fatigue',severity:severity?+severity[1]:null,sleep:sleep?+sleep[1]:null,note:text,source:'Conversation'};}
 export function dailySeries(state){let days=new Map();for(let o of state.observations){let d=days.get(o.date)||{date:o.date,severities:[],sleeps:[]};if(o.symptom.toLowerCase()==='headache'&&Number.isFinite(o.severity))d.severities.push(o.severity);if(Number.isFinite(o.sleep))d.sleeps.push(o.sleep);days.set(o.date,d);}return [...days.values()].sort((a,b)=>a.date.localeCompare(b.date)).map(d=>({date:d.date,severity:d.severities.length?d.severities.reduce((a,b)=>a+b,0)/d.severities.length:null,sleep:d.sleeps.length?d.sleeps.reduce((a,b)=>a+b,0)/d.sleeps.length:null}));}

@@ -5,7 +5,7 @@ import {resolve,dirname} from 'node:path';
 import {timingSafeEqual} from 'node:crypto';
 import {AppError,chat,extract} from './ai-service.mjs';
 const root=dirname(fileURLToPath(import.meta.url));
-const assets=new Map([['/','index.html'],['/index.html','index.html'],['/styles.css','styles.css'],['/app.mjs','app.mjs'],['/model.mjs','model.mjs'],['/live-client.mjs','live-client.mjs']]);
+const assets=new Map([['/','index.html'],['/index.html','index.html'],['/styles.css','styles.css'],['/app.mjs','app.mjs'],['/model.mjs','model.mjs'],['/live-client.mjs','live-client.mjs'],['/journey.mjs','journey.mjs']]);
 const mime=file=>file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8';
 const baseHeaders={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'same-origin','x-frame-options':'DENY'};
 function json(res,status,body){res.writeHead(status,{...baseHeaders,'content-type':'application/json'});res.end(JSON.stringify(body));}

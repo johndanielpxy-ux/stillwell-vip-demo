@@ -65,3 +65,12 @@ Use 1440×1000 for recording. The demo calendar is fixed to 1–13 September 202
 - https://junocompanion.com/
 - https://developers.openai.com/api/docs/guides/structured-outputs
 - https://developers.openai.com/api/docs/guides/pdf-files
+
+
+## Guided UX update — 17 September 2026
+
+Today provides conversation, report and appointment entry points. My health groups records, journal and patterns; old hash links still work. Reviewed observations have a saved-entry receipt. A built-in fictional TXT report uses the actual extract endpoint in live mode and a labelled fixture in prepared mode. Report-specific questions send only that report, with unrelated journal/history excluded. Appointment concern and evidence selections drive both preview and export.
+
+Profile storage stays `stillwell-demo-v1`; optional visitPrep fields are backward compatible. Introduction and last-result preferences use `stillwell-ux-v1`. Uploaded originals remain session-only. Family/reminders remain local previews. This update does not add real HealthHub or clinical integrations.
+
+Validation: `npm test` (23 tests). For browser failure-path tests, run `node tests/ux-test-server.mjs`, open `http://localhost:4319` using gstack browse, then `browse eval tests/ux-browser-check.js`. This local server uses an explicitly labelled provider test double and a non-secret test code. It does not call OpenAI. The browser check creates fictional records in that local origin. Do not run the test-double script on a production origin. Stop the local test server afterwards.
