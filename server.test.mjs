@@ -9,6 +9,24 @@ test('only public assets are served, no .env, source server, tests or config',as
 test('missing configuration and wrong access code cannot call AI',async t=>{let calls=0;let base=await withServer(t,{},async()=>{calls++;});assert.equal((await request(base,'/api/chat',{})).status,503);let configured=await withServer(t,env,async()=>{calls++;});assert.equal((await request(configured,'/api/chat',{},'wrong')).status,401);assert.equal(calls,0);});
 test('real route sends strict schema and returns checked citations',async t=>{let sent;let base=await withServer(t,env,async(url,options)=>{sent=JSON.parse(options.body);return mock(reply)();});let response=await request(base,'/api/chat',{message:'What does my screening report say?',context:seed(),history:[]});assert.equal(response.status,200);let result=await response.json();assert.equal(result.trace.mode,'live');assert.equal(result.citations[0].title,'Health screening results');assert.equal(sent.store,false);assert.equal(sent.text.format.strict,true);assert.equal(sent.model,'test-model');});
 test('unknown sources and fabricated quotes rejected',()=>{let c=buildContext({message:'labs',context:seed()});assert.throws(()=>validateChat({...reply,citations:[{sourceId:'record:fake',quote:'made up'}]},c.sources));assert.throws(()=>validateChat({...reply,citations:[{sourceId:'record:r2',quote:'Haemoglobin: 99'}]},c.sources));});
+test('current symptom report is a citable source distinct from older journal entries',async t=>{
+ const message='Yesterday I had a headache, 3/5, and slept 6 hours.';
+ const observation={date:'2026-09-12',symptom:'Headache',severity:3,sleep:6,note:message};
+ let sent;
+ const base=await withServer(t,env,async(url,options)=>{sent=JSON.parse(options.body);return mock({message:'Please review this entry before saving.',citations:[{sourceId:'message:current',quote:message}],observation,questions:[]})();});
+ const response=await request(base,'/api/chat',{message,context:seed(),history:[]});
+ assert.equal(response.status,200);
+ const result=await response.json();assert.deepEqual(result.observation,observation);
+ assert.equal(result.citations[0].title,'Your message · not yet a saved journal entry');
+ const input=JSON.parse(sent.input);
+ assert.equal(input.sources.find(s=>s.id==='message:current').content,message);
+ assert.deepEqual(sent.text.format.schema.properties.citations.items.properties.sourceId.enum,input.sources.map(s=>s.id));
+ assert.ok(input.sources.some(s=>s.id.startsWith('journal:')),'old history is retained but cannot stand in for the new report');
+});
+test('a current-message citation must still quote that exact message',()=>{
+ const c=buildContext({message:'Yesterday I had a headache, 3/5, and slept 6 hours.',context:seed()});
+ assert.throws(()=>validateChat({...reply,citations:[{sourceId:'message:current',quote:'slept 9 hours'}]},c.sources),{code:'UNSUPPORTED_CITATION'});
+});
 test('correction changes context hash and current record, old assistant answer excluded',()=>{let s=seed();let one=buildContext({message:'report',context:s,history:[]});s.records[1].body='Corrected record';let two=buildContext({message:'report',context:s,history:[{role:'assistant',text:'Old value 13.1'}]});assert.notEqual(one.contextHash,two.contextHash);assert.equal(two.history.length,0);assert.ok(!JSON.stringify(two.sources).includes('13.1'));});
 test('provider failures do not expose credentials or raw upstream errors',async t=>{let base=await withServer(t,env,async()=>({ok:false,status:500,text:async()=>env.OPENAI_API_KEY}));let response=await request(base,'/api/chat',{message:'hello',context:seed()});assert.equal(response.status,502);assert.ok(!(await response.text()).includes(env.OPENAI_API_KEY));});
 test('malformed model output rejected without saving anything',async t=>{let base=await withServer(t,env,mock({message:'incomplete'}));assert.equal((await request(base,'/api/chat',{message:'hello',context:seed()})).status,502);});
