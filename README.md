@@ -74,3 +74,8 @@ Today provides conversation, report and appointment entry points. My health grou
 Profile storage stays `stillwell-demo-v1`; optional visitPrep fields are backward compatible. Introduction and last-result preferences use `stillwell-ux-v1`. Uploaded originals remain session-only. Family/reminders remain local previews. This update does not add real HealthHub or clinical integrations.
 
 Validation: `npm test` (23 tests). For browser failure-path tests, run `node tests/ux-test-server.mjs`, open `http://localhost:4319` using gstack browse, then `browse eval tests/ux-browser-check.js`. This local server uses an explicitly labelled provider test double and a non-secret test code. It does not call OpenAI. The browser check creates fictional records in that local origin. Do not run the test-double script on a production origin. Stop the local test server afterwards.
+
+
+## Visual reference update
+
+The interface uses self-hosted Instrument Sans under the bundled SIL OFL licence, a Juno-app-inspired blush/wine palette and Guava-inspired compact health-data hierarchy. `visual.css` applies the presentation layer; existing routes and AI behaviour are preserved. Public font/CSS paths are explicitly allowlisted. Reference values, screenshot-derived approximations and visual QA are documented in the project visual audit.

@@ -5,8 +5,8 @@ import {resolve,dirname} from 'node:path';
 import {timingSafeEqual} from 'node:crypto';
 import {AppError,chat,extract} from './ai-service.mjs';
 const root=dirname(fileURLToPath(import.meta.url));
-const assets=new Map([['/','index.html'],['/index.html','index.html'],['/styles.css','styles.css'],['/app.mjs','app.mjs'],['/model.mjs','model.mjs'],['/live-client.mjs','live-client.mjs'],['/journey.mjs','journey.mjs']]);
-const mime=file=>file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8';
+const assets=new Map([['/','index.html'],['/index.html','index.html'],['/styles.css','styles.css'],['/app.mjs','app.mjs'],['/model.mjs','model.mjs'],['/live-client.mjs','live-client.mjs'],['/journey.mjs','journey.mjs'],['/visual.css','visual.css'],['/assets/instrument-sans.ttf','assets/instrument-sans.ttf'],['/assets/instrument-sans-OFL.txt','assets/instrument-sans-OFL.txt']]);
+const mime=file=>file.endsWith('.ttf')?'font/ttf':file.endsWith('.txt')?'text/plain; charset=utf-8':file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8';
 const baseHeaders={'cache-control':'no-store','x-content-type-options':'nosniff','referrer-policy':'same-origin','x-frame-options':'DENY'};
 function json(res,status,body){res.writeHead(status,{...baseHeaders,'content-type':'application/json'});res.end(JSON.stringify(body));}
 function authorised(req,code){let candidate=req.headers['x-demo-code'];if(typeof candidate!=='string'||!code)return false;let a=Buffer.from(candidate),b=Buffer.from(code);return a.length===b.length&&timingSafeEqual(a,b);}
