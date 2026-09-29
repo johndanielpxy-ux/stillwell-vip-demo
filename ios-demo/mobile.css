@@ -1,0 +1,53 @@
+/* App-only presentation. The hosted desktop prototype is unchanged. */
+html.ios-demo { background:#fff; -webkit-text-size-adjust:100%; }
+.ios-demo body { background:#fff; }
+.ios-demo .sidebar { display:none!important; }
+.ios-demo main { margin:0; min-height:100dvh; }
+.ios-demo .topbar { height:48px; padding:0 20px; position:relative; background:#fff; }
+.ios-demo .breadcrumb { font-size:14px; font-weight:650; max-width:none; }
+.ios-demo .topbar-right>.text-btn { display:none; }
+.ios-demo .ai-mode-button { font-size:11px; min-height:32px; }
+.ios-demo .page { padding:24px 20px 28px; }
+.ios-demo .page-heading h1 { font-size:28px; line-height:1.15; letter-spacing:-.9px; }
+.ios-demo .page-heading p { font-size:12px; }
+.ios-demo .page-heading { margin-bottom:20px; }
+.ios-demo .intro-note { font-size:13px; padding:0; }
+.ios-demo .today-welcome { padding:24px; min-height:0; border-radius:22px; }
+.ios-demo .welcome h2 { font-size:36px; line-height:1.08; letter-spacing:-1.2px; }
+.ios-demo .today-welcome p { margin:14px 0 20px; }
+.ios-demo .today-welcome .btn { width:100%; font-size:13px; }
+.ios-demo .journey-option { padding:20px 16px; }
+.ios-demo .journey-option strong { font-size:16px; }
+.ios-demo footer { padding:12px 20px 24px; }
+.ios-demo input,.ios-demo textarea,.ios-demo select { font-size:16px!important; }
+.ios-demo dialog input,.ios-demo dialog textarea,.ios-demo dialog select { min-width:0; max-width:100%; width:100%; box-sizing:border-box; }
+.ios-demo .form-grid { grid-template-columns:minmax(0,1fr); }
+.ios-demo .form-grid>label { min-width:0; }
+.ios-demo input[type="date"] { display:block; -webkit-appearance:none; appearance:none; }
+.ios-demo .chat-input textarea { font-size:16px!important; }
+.ios-demo .btn,.ios-demo .icon-btn,.ios-demo .suggestions button { min-height:44px; }
+.ios-demo .icon-btn { min-width:44px; }
+.ios-demo .chat-panel { border-radius:18px; overflow:hidden; }
+.ios-demo .chat-top { padding:14px; }
+.ios-demo .messages { height:clamp(200px,38dvh,350px); padding:14px; }
+.ios-demo .message { padding:13px; font-size:14px; line-height:1.55; }
+.ios-demo .suggestions { display:flex; overflow-x:auto; flex-wrap:nowrap; padding:12px; gap:8px; }
+.ios-demo .suggestions button { flex:none; font-size:12px; }
+.ios-demo .chat-input { margin:0 12px; }
+.ios-demo .chat-footnote { padding:10px 14px 14px; }
+.ios-demo dialog { max-height:calc(100dvh - 28px); width:calc(100% - 24px); max-width:420px; padding:20px; border-radius:22px; overflow-x:hidden; }
+.ios-demo dialog::backdrop { background:#4D29454D; }
+.ios-demo .modal-heading { position:sticky; top:-20px; background:white; z-index:2; padding:12px 0; margin-top:-12px; }
+.ios-demo .modal-heading h2 { font-size:22px; }
+.ios-demo .record-full { min-height:80px; }
+.ios-demo .record-info { min-width:0; }
+.ios-demo .record-info h3 { overflow-wrap:anywhere; }
+.ios-demo .health-tabs button { min-height:44px; padding:10px 14px; }
+.ios-demo .question-row { gap:8px; }
+.ios-demo .question-row p { font-size:14px; }
+.ios-demo #toast { bottom:20px; max-width:calc(100% - 32px); }
+@media(prefers-reduced-motion:reduce) { .ios-demo * { scroll-behavior:auto!important; } }
+@media print {
+  .ios-demo dialog[open] { max-height:none; overflow:visible; width:100%; max-width:none; border:0; border-radius:0; padding:0; }
+  .ios-demo dialog .modal-heading,.ios-demo dialog .modal-actions { display:none; }
+}
